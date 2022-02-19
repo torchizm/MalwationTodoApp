@@ -1,9 +1,6 @@
-const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const validator = require('validator');
 const User = require('../models/User');
 const Role = require('../models/Role');
-const jwt = require('jsonwebtoken');
 const env = require('dotenv');
 env.config();
 
@@ -36,7 +33,9 @@ exports.logout = async (req, res) => {
 
 exports.signUp = async (req, res) => {
 	const password = await bcrypt.hash(req.body.password, 12);
-	const userRole = await Role.findOne({ name: 'user' });
+
+	const usersCount = await User.count();
+	let userRole = (usersCount === 0) ? await Role.findOne({ name: 'admin '}) : await Role.findOne({ name: 'user '});
 
 	const user = new User({
 		username: req.body.username,

@@ -8,7 +8,7 @@ import { userContext } from '../../helpers/userContext';
 const Dashboard = () => {
     const navigate = useNavigate();
     const { user } = useContext(userContext);
-    const [workspaces, setWorkspaces] = useState({});
+    const [workspaces, setWorkspaces] = useState([]);
 
     useEffect(() => {
         if (user.jwt === undefined) return;

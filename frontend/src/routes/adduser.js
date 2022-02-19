@@ -8,7 +8,7 @@ const AddUser = () => {
     const { user } = useContext(userContext);
     const navigate = useNavigate();
     const usernameInput = useRef(null);
-    const [workspace, setWorkspace] = useState({});
+    const [workspace, setWorkspace] = useState([]);
     const [error, setError] = useState('');
     
     useEffect(() => {

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Chart from 'react-google-charts';
-import { FaCrown, FaUsers } from 'react-icons/fa';
+import { FaCrown } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import { userContext } from '../../helpers/userContext';
@@ -10,7 +9,6 @@ const AdminWorkspaces = () => {
     const { user } = useContext(userContext);
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
-    const [search, setSearch] = useState('');
 
     useEffect(() => {
         if (user.jwt === undefined) return;
@@ -27,7 +25,7 @@ const AdminWorkspaces = () => {
                 setUsers(response);
                 setFilteredUsers(response);
             }
-        }).catch(err => {
+        }).catch(() => {
             return;
         });
     }, [user]);

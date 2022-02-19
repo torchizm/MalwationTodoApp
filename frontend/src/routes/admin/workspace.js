@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
-import { useState } from 'react/cjs/react.development';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import api from "../../api";
 import Todo from '../../components/user/todo';
 import { MdDeleteForever } from 'react-icons/md';
@@ -15,7 +14,7 @@ const Workspace = () => {
     const navigate = useNavigate();
     const newItemInput = useRef(null);
     const authUser = useContext(userContext);
-    const [workspace, setWorkspace] = useState({});
+    const [workspace, setWorkspace] = useState([]);
     const [chartData, setChartData] = useState([]);
 
     const chartOptions = {

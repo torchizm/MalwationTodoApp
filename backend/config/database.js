@@ -3,10 +3,18 @@ const env = require('dotenv');
 const checkRoles = require('../app/controllers/RoleController');
 env.config();
 
-mongoose.connect(process.env.DB_URL, { 
+const {
+    DB_USER,
+    DB_PASSWORD,
+    DB_HOST,
+    DB_PORT,
+    DB_NAME,
+} = process.env;
+
+mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`, { 
     useNewUrlParser: true
 });
-
+    
 const db = mongoose.connection
 
 db.on('error', error => console.error(error));

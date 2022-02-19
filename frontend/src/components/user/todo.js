@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react/cjs/react.development';
+import React, { useState } from 'react';
 import api from '../../api';
 import { MdDeleteForever } from 'react-icons/md';
 

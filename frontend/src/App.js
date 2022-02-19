@@ -37,24 +37,22 @@ import {default as AdminTodos} from './routes/admin/todos';
 export var userValue = {};
 
 const App = () => {
-  const [theme, setTheme] = useState('dark');
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState([]);
   userValue = { user, setUser };
 
   useEffect(() => {
-      if (!localStorage.getItem('theme')) {
-        localStorage.setItem('theme', theme);
-        setTheme(theme);
-      }
+    if (!localStorage.getItem('theme') || localStorage.getItem('theme') === null) {
+      localStorage.setItem('theme', 'dark');
+      setBodyTheme('dark');
+    }
 
-      const user = getUser();
-      user.setUser = setUser;
-      setUser(user);
+    const user = getUser();
+    user.setUser = setUser;
+    setUser(user);
   }, []);
 
   const setBodyTheme = (val) => {
     document.body.setAttribute('theme', val);
-    setTheme(val);
   }
 
   return(

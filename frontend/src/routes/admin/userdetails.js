@@ -10,7 +10,7 @@ import { userContext } from '../../helpers/userContext';
 const AdminWorkspaces = () => {
     const navigate = useNavigate();
     const { user } = useContext(userContext);
-    const [data, setData] = useState({});
+    const [data, setData] = useState([]);
     const { userId } = useParams();
     const [workspaceChartData, setWorkspaceChartData] = useState([]);
 
