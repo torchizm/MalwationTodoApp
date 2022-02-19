@@ -1,0 +1,118 @@
+@url = http://127.0.0.1/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjA1NzE3M2VkOWY5YTJjMWY3NDQ5YzIiLCJuYW1lIjoidG9yY2hpem0iLCJlbWFpbCI6ImlzbWFpbHB2bzE1MzVAZ21haWwuY29tIiwiaWF0IjoxNjQ1MTMzNDg5fQ.bTDljIU4ogGijDrkUloQOfzGjn_qbPW1gcmAOaMfQnI
+
+###
+
+POST {{url}}/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "torchizm",
+    "email": "ismailpvo1535@gmail.com",
+    "password": "ismail12"
+}
+
+###
+
+POST  {{url}}/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "ismailpvo1535@gmail.com",
+    "password": "ismail12"
+}
+
+###
+
+GET {{url}}/register HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+POST {{url}}/logout HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+GET {{url}}/user/isAdmin HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+GET {{url}}/workspace HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+GET {{url}}/workspace/620c29a90858a8f3bdaeafa9 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+POST {{url}}/workspace HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "KGBKJSDGS"
+}
+
+###
+PATCH {{url}}/workspace HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "workspace": "62058e05a37a597240a553cc",
+    "name": "iyi senden",
+    "participants": [
+      "62057173ed9f9a2c1f7449c2",
+      "12345653ed9f9a2c1f7449c2",
+      "32145679ed9f9a2c1f7449c2",
+      "45632156ed9f9a2c1f7449c2"
+    ]
+}
+
+###
+DELETE {{url}}/workspace HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "workspace": "62058e13a37a597240a553de"
+}
+
+###
+GET {{url}}/todo HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "workspace": "62058e13a37a597240a553de"
+}
+
+###
+POST {{url}}/todo HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "workspace": "62058e13a37a597240a553de",
+    "description": "App will deploy" 
+}
+
+###
+PATCH {{url}}/todo HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "workspace": "62058e13a37a597240a553de",
+    "todo": "620591fe4d82005967640ef2",
+    "description": "App will anan",
+    "checked": true
+}
+
+###
+
+GET {{url}}/admin/dashboard HTTP/1.1
+Authorization: Bearer {{token}}
