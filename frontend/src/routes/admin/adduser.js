@@ -37,7 +37,6 @@ const AddUser = () => {
             'workspace': workspace._id,
             'member': usernameInput.current.value
         }).then(res => {
-            console.log(res);
             if (res.data.message) { 
                 switch (res.data.message[0]) {
                     case "This member is already in workspace.":
