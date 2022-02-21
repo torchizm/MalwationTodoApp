@@ -35,7 +35,7 @@ exports.signUp = async (req, res) => {
 	const password = await bcrypt.hash(req.body.password, 12);
 
 	const usersCount = await User.count();
-	let userRole = (usersCount === 0) ? await Role.findOne({ name: 'admin '}) : await Role.findOne({ name: 'user '});
+	let userRole = (usersCount === 0) ? await Role.findOne({ name: 'admin'}) : await Role.findOne({ name: 'user'});
 
 	const user = new User({
 		username: req.body.username,
