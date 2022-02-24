@@ -15,7 +15,7 @@ const Dashboard = () => {
 
         api.get('admin/dashboard')
         .then(res => {
-            if (res.data && res.data.message === 'Access denied.') {
+            if (res.data && res.data.message === 'Access denied') {
                 navigate('/dashboard');
             }
 

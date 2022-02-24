@@ -219,14 +219,13 @@ input[type="password"]:focus {
 
 .input-error-big {
   display: none;
-  border-radius: 1rem;
-  padding: 16px;
-  color: var(--main-red);
+  border-radius: 4px;
+  padding: 1rem;
+  color: var(--main-red-highlight);
   background: var(--main-lightgray);
 }
 
 .input-error {
-  display: none;
   color: var(--main-red);
 }
 
@@ -434,6 +433,10 @@ a:active {
   display: flex;
   flex-direction: var(--user-list-orientation);
   gap: 1rem;
+}
+
+.content-wrapper[action="newmember"] .input-area {
+  margin-bottom: 1rem;
 }
 
 .workspace-add-user-form {

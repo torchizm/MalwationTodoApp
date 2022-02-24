@@ -1,3 +1,4 @@
+const { getValidation, getMembersValidation, addValidation, addMemberValidation, removeMemberValidation, editValidation, deleteValidation } = require('../helpers/JoiWorkspaceHelper');
 const ObjectId = require('mongoose').Types.ObjectId
 const Todo = require('../models/Todo');
 const User = require('../models/User');
@@ -23,17 +24,11 @@ exports.index = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-    validationErrors = [];
+    const { error } = getValidation(req.params);
 
-    if (req.params.id === undefined) {
+    if (error) {
         return res.json({
-            message: 'Workspace ID field required.'
-        });
-    };
-
-    if (!ObjectId.isValid(req.params.id)) {
-        return res.json({
-            message: "Not valid id."
+            message: error.details[0].message
         })
     }
 
@@ -59,12 +54,10 @@ exports.get = async (req, res) => {
         }}
     ]);
     
-    if (workspace.length === 0) validationErrors.push('Workspace not found.');
-    
-    if (validationErrors.length !== 0) {
+    if (workspace.length === 0) {
         return res.json({
-            message: validationErrors
-        })
+            message: 'Workspace not found'
+        });
     }
 
     workspace = await Workspace.populate(workspace, [{
@@ -76,9 +69,11 @@ exports.get = async (req, res) => {
 }
 
 exports.getMembers = async (req, res) => {
-    if (!ObjectId.isValid(req.params.id)) {
+    const { error } = getMembersValidation(req.params);
+
+    if (error) {
         return res.json({
-            message: 'Not valid id.'
+            message: error.details[0].message
         })
     }
 
@@ -90,18 +85,27 @@ exports.getMembers = async (req, res) => {
 }
 
 exports.add = async (req, res) => {
+    const { error } = addValidation(req.body);
+
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        })
+    }
+
     const currentWorkspace = await Workspace.findOne({
         name: req.body.name,
         author: res.locals.user._id
     });
 
     if (currentWorkspace !== null) {
-        return res.json({ message: 'This workspace already exists.'});
+        return res.json({
+            message: 'This workspace already exists'
+        });
     }
 
     let participants = [];
     participants.push(res.locals.user._id);
-
 
     const newWorkspace = new Workspace({
         name: req.body.name,
@@ -115,41 +119,54 @@ exports.add = async (req, res) => {
 		}
 
 		if (error.errors['name']) {
-			return res.json({ message: error.errors['name'].message });
+			return res.json({
+                message: error.errors['name'].message
+            });
 		}
 	});
 };
 
 exports.addMember = async (req, res) => {
-    const validationErrors = [];
+    const { error } = addMemberValidation(req.body);
 
-    if (!req.body.workspace) validationErrors.push('Workspace id requried');
-    if (!req.body.member) validationErrors.push('New member id required');
-    
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        })
+    }
+
     let currentWorkspace = await Workspace.findOne({
         _id: req.body.workspace
     });
 
     if (currentWorkspace.author.toString() !== res.locals.user._id.toString()) {
-        return res.status(401).json({ message: 'Access denied.' });
+        return res.status(401).json({
+            message: 'Access denied'
+        });
     }
 
-    if (currentWorkspace === null) validationErrors.push('Workspace not found.');
+    if (currentWorkspace === null) {
+        return res.json({ 
+            message: 'Workspace not found'
+        });
+    } 
 
     const user = await User.findOne({
         username: req.body.member
     });
 
     if (user === null) {
-        validationErrors.push('User not found.')
-        return res.json({ message: validationErrors });
-    };
-    if (currentWorkspace.participants.includes(user._id)) validationErrors.push('This member is already in workspace.');
-    
-    if (validationErrors.length !== 0) {
-        return res.json({ message: validationErrors });
+        return res.json({
+            message: 'User not found'
+        });
     }
 
+    if (currentWorkspace.participants.includes(user._id)) {
+        return res.json({ 
+            message: 'This member is already in workspace'
+        });
+    }
+    
     currentWorkspace.participants.push(user._id);
     currentWorkspace.save();
 
@@ -157,51 +174,68 @@ exports.addMember = async (req, res) => {
 }
 
 exports.removeMember = async (req, res) => {
-    const validationErrors = [];
+    const { error } = removeMemberValidation(req.params);
 
-    if (!req.params.workspace) validationErrors.push('Workspace id requried');
-    if (!req.params.member) validationErrors.push('Member id required');
-    
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        })
+    }
+
     let currentWorkspace = await Workspace.findOne({
         _id: req.params.workspace
     });
     
     if (currentWorkspace.author.toString() !== res.locals.user._id.toString()) {
-        return res.status(401).json({ message: 'Access denied.' });
+        return res.status(401).json({
+            message: 'Access denied'
+        });
     }
 
-    if (currentWorkspace === null) validationErrors.push('Workspace not found.');
-    if (!currentWorkspace.participants.includes(req.params.member)) validationErrors.push('This member is already not in workspace.');
-    
-    if (validationErrors.length !== 0) {
-        return res.json({ message: validationErrors });
+    if (currentWorkspace === null) {
+        return res.json({ 
+            message: 'Workspace not found'
+        });
+    }
+
+    if (!currentWorkspace.participants.includes(req.params.member)) {
+        return res.json({ 
+            message: 'This member is already not in workspace'
+        });
     }
 
     const newParticipants = currentWorkspace.participants.filter(x => x.toString() !== req.params.member);
     currentWorkspace.participants = newParticipants;
     currentWorkspace.save();
 
-    return res.status(200).json({ message: 'User deleted.' });
+    return res.status(200).json({
+        message: 'User deleted'
+    });
 }
 
 exports.edit = async (req, res) => {
-    const validationErrors = [];
+    const { error } = editValidation(req.body);
 
-    if (!req.body.workspace) validationErrors.push('Workspace id requried');
-    if (!req.body.participants) validationErrors.push('Workspace participants required');
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        })
+    }
     
     const currentWorkspace = await Workspace.findOne({
         _id: req.body.workspace
     });
     
-    if (currentWorkspace === null) validationErrors.push('Workspace not found');
-    
-    if (validationErrors.length !== 0) {
-        return res.json({ message: validationErrors });
+    if (currentWorkspace === null) {
+        return res.json({
+            message: 'Workspace not found'
+        });
     }
-
+    
     if (currentWorkspace.author.toString() !== res.locals.user._id.toString()) {
-        return res.status(401).json({ message: 'Access denied.' });
+        return res.status(401).json({
+            message: 'Access denied'
+        });
     }
 
     currentWorkspace.name = req.body.name;
@@ -213,32 +247,42 @@ exports.edit = async (req, res) => {
 		}
 
 		if (error.errors['name']) {
-			return res.json({ message: error.errors['name'].message });
+			return res.json({
+                message: error.errors['name'].message
+            });
 		}
 
 		if (error.errors['participants']) {
-			return res.json({ message: error.errors['participants'].message });
+			return res.json({
+                message: error.errors['participants'].message
+            });
 		}
 	});
 };
 
 exports.delete = async (req, res) => {
-    const validationErrors = [];
+    const { error } = deleteValidation(req.params);
 
-    if (!req.params.id) validationErrors.push('Workspace id requried');
-    
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        })
+    }
+
     const currentWorkspace = await Workspace.findOne({
         _id: req.params.id
     });
     
-    if (currentWorkspace === null) validationErrors.push('Workspace not found');
-    
-    if (validationErrors.length !== 0) {
-        return res.json({ message: validationErrors });
+    if (currentWorkspace === null) {
+        return res.json({
+            message: 'Workspace not found'
+        });
     }
-    
+
     if (currentWorkspace.author.toString() !== res.locals.user._id.toString()) {
-        return res.status(401).json({ message: 'Access denied.'});
+        return res.status(401).json({
+            message: 'Access denied'
+        });
     }
 
     await Todo.deleteMany({
@@ -246,5 +290,7 @@ exports.delete = async (req, res) => {
     });
 
     currentWorkspace.delete();
-    res.status(200).json({ message: 'Workspace deleted.' });
+    res.status(200).json({
+        message: 'Workspace deleted'
+    });
 };

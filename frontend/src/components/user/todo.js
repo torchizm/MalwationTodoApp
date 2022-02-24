@@ -40,11 +40,9 @@ function Todo({ value, author, todoChangeStateHandler, todoDeleteHandler }) {
     const handleChange = (e) => {
         todoChangeStateHandler(item._id);
 
-        api.patch('todo/' + item._id, {
-            'todo': item._id,
+        api.patch(`todo/${item.workspace}/${item._id}`, {
             'description': item.description,
-            'checked': !item.checked,
-            'workspace': item.workspace
+            'checked': !item.checked
         }).then(res => {
             setItem(res.data);
         }).catch(err => {
@@ -55,7 +53,7 @@ function Todo({ value, author, todoChangeStateHandler, todoDeleteHandler }) {
     const handleDelete = (e) => {
         api.delete(`todo/${item.workspace}/${item._id}`)
         .then(res => {
-            if (res.data && res.data.message === "Todo deleted.") {
+            if (res.data && res.data.message === "Todo deleted") {
                 todoDeleteHandler(item._id);
             }
         }).catch(() => {

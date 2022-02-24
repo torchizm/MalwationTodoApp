@@ -1,3 +1,4 @@
+const { getValidation } = require("../../helpers/Admin/JoiUsersHelper");
 const Todo = require("../../models/Todo");
 const User = require("../../models/User");
 const Workspace = require("../../models/Workspace");
@@ -10,19 +11,13 @@ exports.index = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-    if (req.params.id === undefined) {
-        return res.status(404).json({
-            message: 'User id field required.'
-        })
-    }
+    const { error } = getValidation(req.params);
 
-    if (!ObjectId.isValid(req.params.id)) {
+    if (error) {
         return res.json({
-            message: "Not valid id."
-        })
+            message: error.details[0].message
+        });
     }
-
-    const validationErrors = [];
 
     const user = await User.findOne({
         _id: req.params.id
@@ -30,7 +25,11 @@ exports.get = async (req, res) => {
     .select('username email role createdAt')
     .populate('role');
 
-    if (user === null) validationErrors.push('User not found');
+    if (user === null) {
+        return res.json({
+            message: 'User not found'
+        });
+    }
 
     const todos = await Todo.find({
         author: req.params.id
@@ -39,14 +38,6 @@ exports.get = async (req, res) => {
     const workspaces = await Workspace.find({
         participants: ObjectId(req.params.id)
     }).populate('author', 'username');
-
-    if (validationErrors.length !== 0) {
-        return res.json({
-            message: {
-                validationErrors
-            }
-        });
-    }
 
     return res.status(200).json({
         user: user,

@@ -18,7 +18,7 @@ const AdminWorkspaces = () => {
             if (res.data !== undefined) {
                 let response = res.data;
 
-                if (response.message && response.message === "Access denied.") {
+                if (response.message && response.message === "Access denied") {
                     navigate('/');
                 }
 

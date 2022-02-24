@@ -43,7 +43,7 @@ const AdminWorkspaces = () => {
             if (res.data !== undefined) {
                 let response = res.data;
 
-                if (response.message && response.message === "Access denied.") {
+                if (response.message && response.message === "Access denied") {
                     navigate('/');
                 }
 
@@ -106,7 +106,7 @@ const AdminWorkspaces = () => {
                     </p>
 
                     <div className='workspace-wrapper-header'>
-                        <span style={{ fontSize: '30px' }} className='count'>{workspaces.length ?? 0} Çalışma Alanı</span>
+                        <span style={{ fontSize: '30px' }} className='count'>{workspaces.length} Çalışma Alanı</span>
                     </div>
 
                     <div className='workspace-chart-wrapper'>

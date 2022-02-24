@@ -28,7 +28,7 @@ const Todos = () => {
         
         api.get('admin/todos').then(res => {
             if (res.data !== undefined) {
-                if (res.data.message && res.data.message === "Access denied.") {
+                if (res.data.message && res.data.message === "Access denied") {
                     navigate('/');
                 }
 

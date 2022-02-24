@@ -42,7 +42,7 @@ const Dashboard = () => {
             if (res.data !== undefined) {
                 let response = res.data;
 
-                if (response.message && response.message === "Access denied.") {
+                if (response.message && response.message === "Access denied") {
                     navigate('/');
                 }
 
@@ -77,7 +77,7 @@ const Dashboard = () => {
             {workspaces && 
                 <div className='workspace-wrapper'>
                     <div className='workspace-wrapper-header'>
-                        <span style={{ fontSize: '30px' }} className='count'>{workspaces.length ?? 0} Çalışma Alanı</span>
+                        <span style={{ fontSize: '30px' }} className='count'>{workspaces.length} Çalışma Alanı</span>
 
                         <Link to='/dashboard/new'>
                             <button className='btn-primary btn-center-child'><FaPlus /> Oluştur</button>

@@ -38,7 +38,7 @@ router.delete('/workspace/:id', Auth, WorkspaceController.delete);
  */
 router.get('/todo/:id', Auth, TodoController.index);
 router.post('/todo/:id', Auth, TodoController.add);
-router.patch('/todo/:id', Auth, TodoController.edit);
+router.patch('/todo/:workspace/:todo', Auth, TodoController.edit);
 router.delete('/todo/:workspace/:todo', Auth, TodoController.delete);
 
 /**

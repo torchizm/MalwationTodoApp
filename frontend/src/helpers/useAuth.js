@@ -42,7 +42,7 @@ export const register = async (username, email, password) => {
 		})
 
 		if (!res.status === 200 || res.data.message) {
-			return { success: false, message: res.data.message }
+			return { success: false }
 		}
 		
 		localStorage.setItem('rememberme', true);
@@ -58,7 +58,7 @@ export const register = async (username, email, password) => {
 		const user = getUser();
 		return { success: true, user: user };
 	} catch (error) {
-		return { success: false, message: error };
+		return { success: false };
 	}
 }
 

@@ -32,11 +32,11 @@ const AdminWorkspaces = () => {
                 let response = res.data;
 
                 if (response.message) {
-                    if (response.message === "Not valid id.") {
+                    if (response.message === "Not valid id") {
                         navigate('/admin/users');
                     }
 
-                    if (response.message === "Access denied.") {
+                    if (response.message === "Access denied") {
                         navigate('/');
                     }
                 }

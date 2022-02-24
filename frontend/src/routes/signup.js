@@ -1,56 +1,23 @@
 import '../theme.css';
 import '../index.css';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { register } from '../helpers/useAuth';
+import { register as registerUser } from '../helpers/useAuth';
 import { userContext } from '../helpers/userContext';
+import { useForm } from 'react-hook-form';
 
 
 function Signup() {
   const formErrorElement = useRef(null);
-
-  const [usernameErrorText, setUsernameErrorText] = useState('Kullanıcı adınızı girin');
-  const [emailErrorText, setEmailErrorText] = useState('E-post adresinizi girin');
-  const usernameErrorElement = useRef(null);
-  const emailErrorElement = useRef(null);
-  const passwordErrorElement = useRef(null);
   const navigate = useNavigate();
   const { setUser } = useContext(userContext);
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const values = event.target.elements;
-
-    if (!values.username.value) {
-      setUsernameErrorText('Kullanıcı adınızı girin');
-      usernameErrorElement.current.style.display = 'block';
-      return;
-    }
-
-    if (!values.email.value || !validateEmail(values.email.value)) {
-      setEmailErrorText('Geçersiz e-posta adresi');
-      emailErrorElement.current.style.display = 'block';
-      return;
-    }
-    emailErrorElement.current.style.display = 'none';
-
-    if (!values.password.value || !values.confirmPassword.value || values.password.value !== values.confirmPassword.value) {
-      passwordErrorElement.current.style.display = 'block';
-    }
-    passwordErrorElement.current.style.display = 'none';
-
-    const { success, user, message } = await register(values.username.value, values.email.value, values.password.value);
+  const onSubmit = async ({ username, email, password }) => {
+    const { success, user } = await registerUser(username, email, password);
 
     if (success === false) {
-      if (message.includes('username')) {
-        setUsernameErrorText('Kullanıcı zaten mevcut');
-        usernameErrorElement.current.style.display = 'block';
-      }
-      if (message.includes('email')) {
-        setEmailErrorText('Bu e-posta zaten mevcut');
-        emailErrorElement.current.style.display = 'block';
-      }
-
+      formErrorElement.current.style.display = 'block';
       return;
     }
 
@@ -60,50 +27,140 @@ function Signup() {
     navigate('/dashboard');
   }
 
-  const validateEmail = (email) => {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
   return (
-    <main className="container">
-      <form onSubmit={handleSubmit} className="container input-container">
+    <main className='container' style={{ marginTop: '1rem' }}>
+      <form onSubmit={handleSubmit(onSubmit)} className='container input-container'>
         <div className='input-area'>
-          <span className='input-error-big' ref={formErrorElement}>Kullanıcı adı veya şifre yanlış</span>
+          <span className='input-error-big' ref={formErrorElement}>Bu kullanıcı zaten var.</span>
         </div>
 
         <div className='input-area'>
-          <label htmlFor="username">Kullanıcı Adınız</label>
-          <input required name='username' type="text" placeholder='MuqemmelNick2023BorAdam'/>
-          <span ref={usernameErrorElement} className='input-error'>{usernameErrorText}</span>
+          <label htmlFor='username'>Kullanıcı Adınız</label>
+
+          <input 
+            name='username'
+            type='text'
+            placeholder='MueqmmelNick2023BorAdam'
+            {...register('username',
+            { required: {
+                value: true,
+                message: 'Kullanıcı adı gerekli'
+              },
+              maxLength: {
+                value: 255,
+                message: 'Kullanıcı adı en fazla 255 karkater olabilir'
+              },
+              minLength: {
+                value: 6,
+                message: 'Kullanıcı adı en az 6 karakter olabilir'
+              },
+              validate: {
+                hasSpecialChar: (value) => !/[^a-zA-Z0-9]/.test(value) || "Geçersiz kullanıcı adı"
+              }
+            })}
+          />
+          {errors.username?.message && <span className='input-error'>{errors.username?.message}</span>}        
         </div>
 
         <div className='input-area'>
-          <label htmlFor="email">E-Posta Adresi</label>
-          <input required name='email' type="text" placeholder='example@gmail.com'/>
-          <span ref={emailErrorElement} className='input-error'>{emailErrorText}</span>
+          <label htmlFor='email'>E-Posta Adresi</label>
+
+          <input 
+            name='email'
+            type='text'
+            placeholder='example@gmail.com'
+            {...register('email',
+            { required: {
+                value: true,
+                message: 'E-posta alanı gerekli'
+              },
+              maxLength: {
+                value: 255,
+                message: 'E-posta en fazla 255 karakter olabilir'
+              },
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Geçersiz e-posta adresi'
+              }
+            })}
+          />
+          {errors.email?.message && <span className='input-error'>{errors.email?.message}</span>}        
         </div>
 
         <div className='input-area'>
-          <label htmlFor="password">Şifre</label>
-          <input required name='password' type="password" placeholder='Şifre'/>
-          <span ref={passwordErrorElement} className='input-error'>Şifreler birbiriyle uyuşmuyor</span>
+          <label htmlFor='password'>Şifre</label>
+
+          <input 
+            name='password'
+            type='password'
+            placeholder='müqşifre2023'
+            {...register('password',
+            { required: {
+              value: true,
+              message: 'Şifre alanı gerekli'
+            },
+            minLength: {
+              value: 6,
+              message: 'Şifre en az 6 karakter olmalı'
+            },
+            maxLength: {
+              value: 255,
+              message: 'Şifre en fazla 255 karakter olmalı'
+            },
+            validate: {
+              hasLowerLetter: (value) => /[a-z]/.test(value) || "Şifreniz en az bir küçük karakter içermelidir",
+              hasUpperLetter: (value) => /[A-Z]/.test(value) || "Şifreniz en az bir büyük karakter içermelidir",
+              hasNumber: (value) => /[0-9]/.test(value) || "Şifreniz en az bir sayı içermelidir",
+              hasSpecialChar: (value) => /[!@#$%^&*]/.test(value) || "Şifreniz !@#$%^&* özel karakterlerinden en az birini içermelidir"
+            }
+            })}
+          />
+          {errors.password?.message && <span className='input-error'>{errors.password?.message}</span>}
         </div>
 
         <div className='input-area'>
-          <label htmlFor="confirmPassword">Şifrenizi Onaylayın</label>
-          <input required name='confirmPassword' type="password" placeholder='Şifre'/>
+          <label htmlFor='confirmPassword'>Şifrenizi Onaylayın</label>
+          <input 
+            name='rePassword'
+            type='password'
+            placeholder='müqşifre2023'
+            {...register('rePassword', {
+              required: {
+                value: true,
+                message: "Şifrenizi yeniden yazın"
+              },
+              validate: {
+                matchesPreviousPassword: (value) => {
+                  const { password } = getValues();
+                  return password === value || "Şifreler birbiriyle uyuşmuyor";
+                }
+              }
+            })}
+          />
+          {errors.rePassword?.message && <span className='input-error'>{errors.rePassword?.message}</span>}
         </div>
 
         <div style={{ justifyContent: 'unset', flexDirection: 'row', alignItems: 'center' }} className='input-area'>
           <div style={{ flexGrow: '1' }}>
-            <label className='checkbox-container' htmlFor="privacyPolicy">
-              <input required name='privacyPolicy' className='checkbox' type="checkbox"/>
+            <label className='checkbox-container' htmlFor='privacyPolicy'>
+              <input 
+                name='privacyPolicy'
+                type='checkbox'
+                className='checkbox'
+                {...register('privacyPolicy', {
+                  required: {
+                    value: true,
+                    message: 'Kayıt olmak için şartları ve gizlilik politikasını kabul etmelisiniz.'
+                  }
+                })}
+                />
               <a style={{ marginLeft: '8px', color: 'blue' }} href='/signup'>Şartları</a> ve <a style={{color: 'blue'}} href='/signup'>gizlilik politikasını</a> kabul ediyorum
             </label>
+            <br/>
+            {errors.privacyPolicy?.message && <span className='input-error'>{errors.privacyPolicy?.message}</span>}
           </div>
           
-          <input style={{ margin: '0' }} className='btn-primary' id='submit' type="submit" value='Kayıt Ol'/>
+          <input style={{ margin: '0' }} className='btn-primary' id='submit' type='submit' value='Kayıt Ol'/>
         </div>
       </form>
     </main>

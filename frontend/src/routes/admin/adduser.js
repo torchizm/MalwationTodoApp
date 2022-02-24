@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import api from '../../api';
 import { userContext } from '../../helpers/userContext';
@@ -7,9 +8,9 @@ const AddUser = () => {
     const { workspaceId } = useParams();
     const { user } = useContext(userContext);
     const navigate = useNavigate();
-    const usernameInput = useRef(null);
     const [workspace, setWorkspace] = useState([]);
     const [error, setError] = useState('');
+    const { register, handleSubmit, formState: { errors } } = useForm();
     
     useEffect(() => {
         if (user.jwt === undefined) return;
@@ -18,7 +19,7 @@ const AddUser = () => {
             if (res.data !== undefined) {
                 let response = res.data;
                 
-                if (response.message && response.message === "Access denied.") {
+                if (response.message && response.message === "Access denied") {
                     navigate('/');
                 }
                 
@@ -30,25 +31,23 @@ const AddUser = () => {
 
     }, [user]);
     
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const onSubmit = async ({ username }) => {
         api.post('admin/workspace/member', {
             'workspace': workspace._id,
-            'member': usernameInput.current.value
+            'member': username
         }).then(res => {
             if (res.data.message) { 
-                switch (res.data.message[0]) {
-                    case "This member is already in workspace.":
+                switch (res.data.message) {
+                    case "This member is already in workspace":
                         setError('Bu kişi zaten çalışma alanında var');
                         break;
-                    case "Workspace not found.":
+                    case "Workspace not found":
                         setError('Çalışma alanı bulunamadı');
                         break;
-                    case "User not found.":
+                    case "User not found":
                         setError('Kullanıcı bulunamadı');
                         break;
-                    case "Access denied.":
+                    case "Access denied":
                         setError('Bu çalışma alanı için yetkiniz yok');
                         break;
                     default:
@@ -77,7 +76,7 @@ const AddUser = () => {
             <div className='content-wrapper' action='newmember'>
                 <div className='workspace-user-list'>
                     {workspace.users !== undefined &&
-                        <span className='count'><strong>{workspace.participants.length ?? 0}</strong> Kişi</span>
+                        <span className='count'><strong>{workspace.participants.length}</strong> Kişi</span>
                     }
 
                     {workspace.participants !== undefined &&
@@ -95,10 +94,30 @@ const AddUser = () => {
 
                     <h2 style={{ margin: '0 0 1rem 0' }}>Yeni çalışma arkadaşınızın kullanıcı adını girin.</h2>
 
-                    <form className='new-form' onSubmit={handleSubmit}>
-                        <input className='half-radius' ref={usernameInput} type='text' placeholder='MukemmelNickBorAdam2023'/>
+                    <form className='new-form' onSubmit={handleSubmit(onSubmit)}>
+                        <input 
+                            name='username'
+                            type='text'
+                            placeholder='MueqmmelNick2023BorAdam'
+                            {...register('username',
+                            { required: {
+                                value: true,
+                                message: 'Kullanıcı adı gerekli'
+                            },
+                            maxLength: {
+                                value: 255,
+                                message: 'Kullanıcı adı en fazla 255 karkater olabilir'
+                            },
+                            minLength: {
+                                value: 6,
+                                message: 'Kullanıcı adı en az 6 karakter olabilir'
+                            }
+                            })}
+                        />
                         <input className='half-radius btn-primary' type='submit' value='Ekle'/>
                     </form>
+   
+                    {errors.username?.message && <span className='input-error'>{errors.username?.message}</span>}
                 </div>
             </div>
         </main>

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const todoSchema = new mongoose.Schema({
     description: {
         type: String,
-        required: [true, "Description field required."]
+        required: [true, "Description field required"]
     },
     checked: {
         type: Boolean,
@@ -11,12 +11,12 @@ const todoSchema = new mongoose.Schema({
     },
     workspace: {
         type: mongoose.Schema.Types.ObjectId,
-        required: [true, "Workspace field required."],
+        required: [true, "Workspace field required"],
         ref: 'workspace'
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        required: [true, "Author field required."],
+        required: [true, "Author field required"],
         ref: 'user'
     }
 }, {

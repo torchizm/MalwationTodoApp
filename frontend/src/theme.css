@@ -102,11 +102,15 @@ body[theme="dark"] {
 
     
     .user-todo-list .todo:nth-child(odd):after {
-    content: '';
-    position: absolute;
-    height: 100%;
-    right: -10px;
-    border-right: 2px solid var(--main-gray);
-    border-radius: 8px;
-  }
+        content: '';
+        position: absolute;
+        height: 100%;
+        right: -10px;
+        border-right: 2px solid var(--main-gray);
+        border-radius: 8px;
+    }
+
+    .user-todo-list .todo:last-child:after {
+        display: none;
+    }
 }

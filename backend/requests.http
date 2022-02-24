@@ -1,5 +1,5 @@
 @url = http://127.0.0.1/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjA1NzE3M2VkOWY5YTJjMWY3NDQ5YzIiLCJuYW1lIjoidG9yY2hpem0iLCJlbWFpbCI6ImlzbWFpbHB2bzE1MzVAZ21haWwuY29tIiwiaWF0IjoxNjQ1MTMzNDg5fQ.bTDljIU4ogGijDrkUloQOfzGjn_qbPW1gcmAOaMfQnI
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjA1NzE3M2VkOWY5YTJjMWY3NDQ5YzIiLCJuYW1lIjoidG9yY2hpem0iLCJlbWFpbCI6ImlzbWFpbHB2bzE1MzVAZ21haWwuY29tIiwiaWF0IjoxNjQ1NjM4ODUwfQ.h4Qst99Uh1soPFPvL8qsCDVojswtz3-8kB-_hVACKvA
 
 ###
 
@@ -7,9 +7,9 @@ POST {{url}}/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "torchizm",
-    "email": "ismailpvo1535@gmail.com",
-    "password": "ismail12"
+    "username": "as12312321321d",
+    "email": "seaasesea@gmail.com",
+    "password": "sea123!!"
 }
 
 ###
@@ -23,9 +23,6 @@ content-type: application/json
 }
 
 ###
-
-GET {{url}}/register HTTP/1.1
-Authorization: Bearer {{token}}
 
 ###
 
@@ -44,6 +41,7 @@ Authorization: Bearer {{token}}
 
 ###
 
+# GET {{url}}/workspace/620c29a90858a8f3bdaeafa9 HTTP/1.1
 GET {{url}}/workspace/620c29a90858a8f3bdaeafa9 HTTP/1.1
 Authorization: Bearer {{token}}
 
@@ -53,7 +51,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "KGBKJSDGS"
+    "name": "qa"
 }
 
 ###
@@ -62,7 +60,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "workspace": "62058e05a37a597240a553cc",
+    "workspace": "6216761f208b1f7460844bfd",
     "name": "iyi senden",
     "participants": [
       "62057173ed9f9a2c1f7449c2",
@@ -73,41 +71,31 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{url}}/workspace HTTP/1.1
+DELETE {{url}}/workspace/621675b41c0d2924707265b1 HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
-
-{
-    "workspace": "62058e13a37a597240a553de"
-}
 
 ###
-GET {{url}}/todo HTTP/1.1
+GET {{url}}/todo/6216761f208b1f7460844bfd HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
-
-{
-    "workspace": "62058e13a37a597240a553de"
-}
 
 ###
-POST {{url}}/todo HTTP/1.1
+POST {{url}}/todo/6216761f208b1f7460844bfd HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "workspace": "62058e13a37a597240a553de",
     "description": "App will deploy" 
 }
 
 ###
-PATCH {{url}}/todo HTTP/1.1
+PATCH {{url}}/todo/6216761f208b1f7460844bfd HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "workspace": "62058e13a37a597240a553de",
-    "todo": "620591fe4d82005967640ef2",
+    "todo": "6216784eb4084cee233b5941",
     "description": "App will anan",
     "checked": true
 }

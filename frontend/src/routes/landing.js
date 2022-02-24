@@ -1,11 +1,10 @@
-import React, { useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import mockup from '../assets/mockup.png';
 import { userContext } from '../helpers/userContext';
 
 function Landing() {
-    const navigate = useNavigate();
-    const { user, setUser } = useContext(userContext);
+    const { user } = useContext(userContext);
 
     return (
         <main className='landing text-align-center'>

@@ -1,3 +1,4 @@
+const { indexValidation, addValidation, editValidation, deleteValidation } = require('../helpers/JoiTodoHelper.js');
 const Todo = require('../models/Todo');
 const Workspace = require('../models/Workspace');
 
@@ -9,8 +10,14 @@ const Workspace = require('../models/Workspace');
  * @returns users todo list of current workspace
  */
 exports.index = async (req, res) => {
-    if (!req.params.id) return res.json({ message: 'Workspace field required.' });
-    
+    const { error } = indexValidation(req.params);
+
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        })
+    }
+
     const todos = await Todo.find({
         workspace: req.params.id
     }).sort({ checked: 'ascending', updatedAt: 'descending' });
@@ -26,17 +33,23 @@ exports.index = async (req, res) => {
  * @returns added todo list item
  */
 exports.add = async (req, res) => {
-    const validationErrors = [];
+    const { error } = addValidation({...req.params, ...req.body});
 
-    if (!req.params.id) validationErrors.push('Workspace field requried.');
-    if (!req.body.description) validationErrors.push('Description field required.');
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        });
+    }
 
     const currentWorkspace = await Workspace.findOne({
         id: req.params.id
     });
 
-    if (currentWorkspace === null) validationErrors.push('Invalid workspace.');
-    if (validationErrors.length !== 0) return res.json({ message: validationErrors });
+    if (currentWorkspace === null) {
+        return res.json({
+            message: 'Invalid workspace'
+        });
+    }
 
     const newTodo = new Todo({
         description: req.body.description,
@@ -50,15 +63,21 @@ exports.add = async (req, res) => {
 		}
 
 		if (error.errors['description']) {
-			return res.json({ message: error.errors['description'].message });
+			return res.json({
+                message: error.errors['description'].message
+            });
 		}
 
         if (error.errors['workspace']) {
-			return res.json({ message: error.errors['workspace'].message });
+			return res.json({
+                message: error.errors['workspace'].message
+            });
 		}
 
         if (error.errors['author']) {
-			return res.json({ message: error.errors['author'].message });
+			return res.json({
+                message: error.errors['author'].message
+            });
 		}
 	});
 };
@@ -71,30 +90,38 @@ exports.add = async (req, res) => {
  * @returns edited todo item
  */
 exports.edit = async (req, res) => {
-    const validationErrors = [];
+    const { error } = editValidation({...req.params, ...req.body});
 
-    if (!req.body.workspace) validationErrors.push('Workspace field requried.');
-    if (!req.body.todo) validationErrors.push('Todo field required.');
-    if (!req.body.description) validationErrors.push('Description field required.');
-    if (req.body.checked === undefined) validationErrors.push('Checked field required.');
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        });
+    }
 
     const currentWorkspace = await Workspace.findOne({
-        _id: req.body.workspace
+        _id: req.params.workspace
     });
 
-    if (currentWorkspace === null) validationErrors.push('Invalid workspace.');
-    if (validationErrors.length !== 0) return res.json({ message: validationErrors });
+    if (currentWorkspace === null) {
+        return res.json({
+            message: 'Invalid workspace'
+        });
+    }
 
     const currentTodo = await Todo.findOne({
-        _id: req.body.todo
+        _id: req.params.todo
     });
 
     if (currentTodo === null) {
-        return res.status(404).json({ message: 'Todo not found' });
+        return res.status(404).json({
+            message: 'Todo not found'
+        });
     }
 
     if (!currentWorkspace.participants.includes(res.locals.user._id) && res.locals.user.role.name !== 'admin') {
-        return res.status(401).json({ message: 'Access denied.' });
+        return res.status(401).json({
+            message: 'Access denied'
+        });
     }
 
     currentTodo.description = req.body.description;
@@ -106,11 +133,15 @@ exports.edit = async (req, res) => {
 		}
 
 		if (error.errors['description']) {
-			return res.json({ message: error.errors['description'].message });
+			return res.json({
+                message: error.errors['description'].message
+            });
 		}
 
 		if (error.errors['checked']) {
-			return res.json({ message: error.errors['checked'].message });
+			return res.json({
+                message: error.errors['checked'].message
+            });
 		}
 	});
 };
@@ -123,26 +154,37 @@ exports.edit = async (req, res) => {
  * @summary deletes specified todo list item from current workspace
  */
 exports.delete = async (req, res) => {
-    const validationErrors = [];
+    const { error } = deleteValidation(res.params);
 
-    if (!req.params.todo) validationErrors.push('Todo field required.');
-    if (!req.params.workspace) validationErrors.push('Workspace field requried.');
+    if (error) {
+        return res.json({
+            message: error.details[0].message
+        });
+    }
 
     const currentWorkspace = await Workspace.findOne({
         id: req.params.workspace
     });
 
-    if (currentWorkspace === null) validationErrors.push('Invalid workspace.');
-    if (validationErrors.length !== 0) return res.json({ message: validationErrors });
+    if (currentWorkspace === null) {
+        return res.json({
+            message: 'Invalid workspace'
+        });
+    }
 
     const currentTodo = await Todo.findOne({
         _id: req.params.todo
     });
 
     if (currentTodo === null) {
-        return res.status(404).json({ message: 'Todo not found' });
+        return res.status(404).json({
+            message: 'Todo not found'
+        });
     }
 
     currentTodo.delete();
-    res.status(200).json({ message: 'Todo deleted.' });
+
+    res.status(200).json({
+        message: 'Todo deleted'
+    });
 };
